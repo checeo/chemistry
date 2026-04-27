@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Химия ЕГЭ — Тренажёр реакций</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- DESKTOP HEADER -->
+  <header class="header desktop-only">
+    <div class="header-left">
+      <span class="logo">⚗</span>
+      <div>
+        <h1>Органическая химия</h1>
+        <p class="subtitle">Тренажёр реакций для ЕГЭ</p>
+      </div>
+    </div>
+    <div class="stats-bar">
+      <div class="stat-chip">
+        <span class="stat-num" id="stat-learned-d">0</span>
+        <span class="stat-label">выучено</span>
+      </div>
+      <div class="stat-chip">
+        <span class="stat-num" id="stat-weak-d">0</span>
+        <span class="stat-label">слабо</span>
+      </div>
+      <div class="stat-chip">
+        <span class="stat-num" id="stat-total-d">0</span>
+        <span class="stat-label">всего</span>
+      </div>
+      <div class="stat-chip">
+        <span class="stat-num" id="study-timer-d">00:00</span>
+        <span class="stat-label">время</span>
+      </div>
+      <div class="stat-chip streak-chip" id="streak-chip-d" title="Серия правильных ответов">
+        <span class="stat-num streak-num" id="streak-d">0</span>
+        <span class="stat-label">стрик 🔥</span>
+      </div>
+      <button class="reset-btn" id="reset-btn" title="Сбросить прогресс">↺</button>
+    </div>
+  </header>
+
+  <!-- MOBILE HEADER -->
+  <header class="mobile-header mobile-only">
+    <div class="mobile-header-left">
+      <span class="logo-sm">⚗</span>
+      <span class="mobile-deck-name" id="mobile-deck-name">Все темы</span>
+    </div>
+    <div class="mobile-header-right">
+      <span class="streak-badge" id="streak-m">🔥 0</span>
+      <span class="mobile-timer" id="study-timer-m">00:00</span>
+      <button class="reset-btn-sm" id="reset-btn-m" title="Настройки">⋮</button>
+    </div>
+  </header>
+
+  <div class="progress-bar-wrap">
+    <div class="progress-bar" id="progress-bar"></div>
+  </div>
+
+  <div class="layout">
+
+    <!-- DESKTOP SIDEBAR -->
+    <aside class="sidebar desktop-only" aria-label="Меню колод">
+      <div class="sidebar-title">Колоды</div>
+      <button class="sidebar-add-btn hidden" id="add-reaction-btn" type="button">+ Добавить реакцию</button>
+      <div class="sidebar-buttons" id="sidebar-buttons"></div>
+    </aside>
+
+    <main class="main">
+
+      <!-- MOBILE STATS BAR -->
+      <div class="mobile-stats mobile-only">
+        <div class="mstat"><span id="stat-learned-m">0</span><small>выучено</small></div>
+        <div class="mstat"><span id="stat-weak-m">0</span><small>слабо</small></div>
+        <div class="mstat"><span id="stat-total-m">0</span><small>всего</small></div>
+        <div class="mstat deck-pct-stat"><span id="deck-pct">0%</span><small>колода</small></div>
+      </div>
+
+    <div class="card" id="card">
+
+      <div class="card-meta">
+        <span class="tag" id="card-group">Алканы</span>
+        <div class="card-meta-right">
+          <button class="meta-action-btn" id="favorite-btn" type="button" title="Добавить в избранное">△</button>
+          <button class="meta-action-btn danger" id="delete-btn" type="button" title="Удалить реакцию">✕</button>
+          <button class="steps-btn" id="steps-btn" type="button" title="Список реакций">≡</button>
+          <span class="reaction-num" id="card-num">1 / 40</span>
+        </div>
+      </div>
+
+      <!-- DECK PROGRESS BAR (for topic decks) -->
+      <div class="deck-progress-wrap" id="deck-progress-wrap" style="display:none">
+        <div class="deck-progress-bar" id="deck-progress-bar"></div>
+        <span class="deck-progress-label" id="deck-progress-label">0%</span>
+      </div>
+
+      <div class="reaction-name" id="reaction-name">Галогенирование</div>
+
+      <div class="equation-zone" id="equation-zone">
+        <div class="equation-display" id="equation-display"></div>
+        <div class="arrow-zone">
+          <div class="catalyst-above" id="catalyst-label"></div>
+          <div class="arrow">→</div>
+          <div class="condition-below" id="condition-label"></div>
+        </div>
+        <div class="products-zone" id="products-zone"></div>
+      </div>
+
+      <div class="answer-section" id="answer-section">
+        <p class="answer-hint">Запишите продукты реакции и укажите катализатор:</p>
+        <textarea id="user-answer" class="answer-input" placeholder="Например: CH₃–CH₂Cl + HCl" rows="3"></textarea>
+        <button class="btn btn-show" id="show-btn">Показать решение</button>
+      </div>
+
+      <div class="solution-section hidden" id="solution-section">
+
+        <div class="solution-block">
+          <div class="solution-label">Полное уравнение:</div>
+          <div class="full-equation" id="full-equation"></div>
+        </div>
+
+        <div class="details-grid">
+          <div class="detail-box">
+            <div class="detail-title">Реагенты</div>
+            <div class="detail-val" id="detail-reagents"></div>
+          </div>
+          <div class="detail-box">
+            <div class="detail-title">Продукты</div>
+            <div class="detail-val" id="detail-products"></div>
+          </div>
+          <div class="detail-box" id="detail-catalyst-box">
+            <div class="detail-title">Условия / катализатор</div>
+            <div class="detail-val" id="detail-catalyst"></div>
+          </div>
+          <div class="detail-box">
+            <div class="detail-title">Тип реакции</div>
+            <div class="detail-val" id="detail-type"></div>
+          </div>
+        </div>
+
+        <div class="note-box" id="note-box" style="display:none">
+          <span class="note-icon">💡</span>
+          <span id="note-text"></span>
+        </div>
+
+        <div class="know-section">
+          <p class="know-label">Как хорошо вы знаете эту реакцию?</p>
+          <div class="know-btns">
+            <button class="btn btn-no" id="btn-no">
+              <span class="know-icon">✗</span>
+              <span class="know-text">Не знаю</span>
+            </button>
+            <button class="btn btn-weak" id="btn-weak">
+              <span class="know-icon">~</span>
+              <span class="know-text">Плохо</span>
+            </button>
+            <button class="btn btn-good" id="btn-good">
+              <span class="know-icon">✓</span>
+              <span class="know-text">Отлично!</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </div><!-- /card -->
+
+    <div class="done-card hidden" id="done-card">
+      <div class="done-icon">🎉</div>
+      <h2 id="done-title">Все реакции выучены!</h2>
+      <p id="done-text">Вы прошли весь текущий набор. Отличная работа!</p>
+      <button class="btn btn-show" id="restart-btn">Начать заново</button>
+    </div>
+
+    <!-- WEAK SPOTS PANEL (shown below card) -->
+    <div class="weak-panel" id="weak-panel" style="display:none">
+      <div class="weak-panel-title">⚠️ Слабые места в этой теме</div>
+      <div class="weak-list" id="weak-list"></div>
+    </div>
+
+    </main>
+  </div>
+
+  <!-- MOBILE BOTTOM NAV -->
+  <nav class="bottom-nav mobile-only" id="bottom-nav">
+    <div class="bottom-nav-decks" id="bottom-nav-decks"></div>
+  </nav>
+
+</div><!-- /app -->
+
+<!-- STEPS MODAL -->
+<div class="modal hidden" id="steps-modal" role="dialog" aria-modal="true" aria-labelledby="steps-title">
+  <div class="modal-backdrop" id="steps-backdrop"></div>
+  <div class="modal-card">
+    <div class="modal-head">
+      <div class="modal-title" id="steps-title">Цепочка</div>
+      <button class="modal-close" id="steps-close" type="button" aria-label="Закрыть">×</button>
+    </div>
+    <ol class="modal-list" id="steps-list"></ol>
+  </div>
+</div>
+
+<!-- STATS MODAL (mobile) -->
+<div class="modal hidden" id="stats-modal" role="dialog" aria-modal="true">
+  <div class="modal-backdrop" id="stats-backdrop"></div>
+  <div class="modal-card stats-modal-card">
+    <div class="modal-head">
+      <div class="modal-title">Прогресс и настройки</div>
+      <button class="modal-close" id="stats-close" type="button">×</button>
+    </div>
+    <div class="stats-modal-body">
+      <div class="stats-overview">
+        <div class="stats-big-num" id="sm-learned">0</div>
+        <div class="stats-big-label">реакций выучено</div>
+        <div class="stats-row">
+          <span id="sm-weak">0</span> слабо &nbsp;·&nbsp; <span id="sm-total">0</span> всего &nbsp;·&nbsp; время: <span id="sm-timer">00:00</span>
+        </div>
+      </div>
+
+      <div class="class-progress-section">
+        <div class="section-label">Прогресс по классам</div>
+        <div id="class-progress-list"></div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-weak" id="sm-add-btn" type="button">+ Добавить реакцию</button>
+        <button class="btn btn-no" id="sm-reset-btn" type="button">↺ Сбросить прогресс</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DECK PICKER MODAL (mobile) -->
+<div class="modal hidden" id="deck-modal" role="dialog" aria-modal="true">
+  <div class="modal-backdrop" id="deck-backdrop"></div>
+  <div class="modal-card deck-modal-card">
+    <div class="modal-head">
+      <div class="modal-title">Выбор колоды</div>
+      <button class="modal-close" id="deck-close" type="button">×</button>
+    </div>
+    <div class="deck-modal-list" id="deck-modal-list"></div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
