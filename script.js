@@ -2614,7 +2614,9 @@ function setSyncParam(id) {
 }
 
 function isSyncEnabled() {
-  // Sync disabled if placeholder key is still there
+  // Enabled if runtime key is stored or bundled key is not placeholder.
+  const stored = localStorage.getItem(STORAGE_KEY + '_apikey');
+  if (stored && stored.startsWith('$2a$')) return true;
   return JSONBIN_KEY && !JSONBIN_KEY.includes('placeholder');
 }
 
@@ -3801,18 +3803,6 @@ function openSyncModal() {
 function closeSyncModal() {
   const modal = $('sync-modal');
   if (modal) modal.classList.add('hidden');
-}
-
-// Override isSyncEnabled to check localStorage key too
-const _isSyncEnabled_orig = isSyncEnabled;
-function isSyncEnabled() {
-  const stored = localStorage.getItem(STORAGE_KEY + '_apikey');
-  if (stored && stored.startsWith('$2a$')) {
-    // patch JSONBIN_KEY at runtime
-    Object.defineProperty(window, '__JSONBIN_KEY', { value: stored, configurable: true });
-    return true;
-  }
-  return _isSyncEnabled_orig();
 }
 
 // Runtime key accessor
